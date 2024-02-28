@@ -1,57 +1,56 @@
 import React, { useState } from 'react';
-import Web3 from 'web3';
+import Web3 from 'web3'; // Assuming TokenDistributionABI.json contains the ABI of the TokenDistribution contract
 
-const TransferToken = () => {
-  const [recipient, setRecipient] = useState('');
-  const [amount, setAmount] = useState('');
+const TokenDistributionPage = () => {
+  const [recipients, setRecipients] = useState('');
+  const [amounts, setAmounts] = useState('');
 
-  // Replace this with the ABI of your ERC20 token contract
-  const ERC20_ABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[],"name":"BountyWallet","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"subtractedValue","type":"uint256"}],"name":"decreaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"addedValue","type":"uint256"}],"name":"increaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"isOwner","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"lock","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_address","type":"address"}],"name":"makeOwner","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"mint","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"mintedTokens","outputs":[{"internalType":"uint256","name":"bal","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"proplayerWallet","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"typex","type":"string"},{"internalType":"address","name":"_address","type":"address"}],"name":"setAddress","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"start","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"timeLockWallet","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"unlock","outputs":[],"stateMutability":"nonpayable","type":"function"}];
+  const TokenDistributionABI = [{"inputs":[{"internalType":"address","name":"_tokenAddress","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"recipient","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"TokensDistributed","type":"event"},{"inputs":[{"internalType":"address[]","name":"_recipients","type":"address[]"},{"internalType":"uint256[]","name":"_amounts","type":"uint256[]"}],"name":"distributeTokens","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"token","outputs":[{"internalType":"contract ERC20","name":"","type":"address"}],"stateMutability":"view","type":"function"}];
 
-  // Replace this with the address of your ERC20 token contract
-  const ERC20_ADDRESS = '0x4492f32AEB243589d17Dc13545893026021E3644';
 
-  const handleRecipientChange = (event) => {
-    setRecipient(event.target.value);
+
+  const handleRecipientsChange = (event) => {
+    setRecipients(event.target.value);
   };
 
-  const handleAmountChange = (event) => {
-    setAmount(event.target.value);
+  const handleAmountsChange = (event) => {
+    setAmounts(event.target.value);
   };
 
-  const handleTransfer = async () => {
-    if (!recipient || !amount) {
-      alert('Please enter recipient address and amount.');
+  const handleDistribution = async () => {
+    if (!window.ethereum) {
+      alert('MetaMask extension not detected. Please install MetaMask to use this feature.');
       return;
     }
 
-    if (window.ethereum) {
-      try {
-        const web3 = new Web3(window.ethereum);
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const contract = new web3.eth.Contract(ERC20_ABI, ERC20_ADDRESS);
+    const web3 = new Web3(window.ethereum);
 
-        await contract.methods.transfer(recipient, amount * 1000000000000000000).send({ from: accounts[0] });
-        
-        alert('Token transfer successful!');
-      } catch (error) {
-        alert('Token transfer failed. Make sure MetaMask is unlocked and connected to the correct network.');
-      }
-    } else {
-      alert('MetaMask extension not detected. Please install MetaMask to use this feature.');
+    try {
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      // const networkId = await web3.eth.net.getId();
+      const tokenDistributionAddress = '0x27573fF1b2BC35af660Ee5f16dF46a062E87eb1d'; // Address of your deployed TokenDistribution contract
+      const tokenDistributionContract = new web3.eth.Contract(TokenDistributionABI, tokenDistributionAddress);
+
+      const recipientsArray = recipients.split(',');
+      const amountsArray = amounts.split(',').map((amount) => web3.utils.toWei(amount.trim(), 'ether'));
+
+      await tokenDistributionContract.methods.distributeTokens(recipientsArray, amountsArray).send({ from: accounts[0] });
+      alert('Tokens distributed successfully');
+    } catch (error) {
+      alert('Failed to distribute tokens');
     }
   };
 
   return (
     <div>
-      <h1>Transfer MATIC_3 Token</h1>
-      <label>Recipient Address:</label>
-      <input type="text" value={recipient} onChange={handleRecipientChange} />
-      <label>Amount:</label>
-      <input type="text" value={amount} onChange={handleAmountChange} />
-      <button onClick={handleTransfer}>Transfer</button>
+      <h1>Token Distribution Page</h1>
+      <label>Recipients (comma-separated addresses):</label>
+      <input type="text" value={recipients} onChange={handleRecipientsChange} />
+      <label>Amounts (comma-separated amounts):</label>
+      <input type="text" value={amounts} onChange={handleAmountsChange} />
+      <button onClick={handleDistribution}>Distribute Tokens</button>
     </div>
   );
 };
 
-export default TransferToken;
+export default TokenDistributionPage;
